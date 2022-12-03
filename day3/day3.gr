@@ -1,0 +1,74 @@
+import std::char;
+import std::file;
+import std::list;
+import std::math;
+import std::path;
+import std::set;
+import std::string;
+import std::time;
+
+func problem_one(final input: List) :: Int:
+  var score = 0;
+
+  for line in input:
+    var len = line.length();
+
+    var first = Set(line.substring(0, len / 2));
+    var second = Set(line.substring(len / 2, len));
+
+    for c in first:
+      if second.contains(c):
+        if c.is_lower():
+          score += 1 + Int(c) - Int('a');
+        else:
+          score += 27 + Int(c) - Int('A');
+        end
+        break;
+      end
+    end
+  end
+
+  return score;
+end
+
+func problem_two(final input: List) :: Int:
+  var score = 0;
+  var index = 0;
+  while index < input.length():
+    var first = Set(input[index]);
+    var second = Set(input[index + 1]);
+    var third = Set(input[index + 2]);
+
+    for c in first:
+      if second.contains(c) and third.contains(c):
+        if c.is_lower():
+          score += 1 + Int(c) - Int('a');
+        else:
+          score += 27 + Int(c) - Int('A');
+        end
+        break;
+      end
+    end
+    index += 3;
+  end
+
+  return score;
+end
+
+func main(final args: List):
+  var file_path = std::path::Path(__FILE);
+  var input_path = file_path.get_directory().combine("input.txt");
+
+  var input = std::file::read_all_lines(input_path.data);
+
+  var timer = std::time::TimePoint();
+  var p1 = problem_one(input);
+  var elapsed = timer.elapsed_formatted();
+  println("Problem 1: " + p1 + ", completed in " + elapsed);
+
+  timer = std::time::TimePoint();
+  var p2 = problem_two(input);
+  elapsed = timer.elapsed_formatted();
+  println("Problem 2: " + p2 + ", completed in " + elapsed);
+
+end
