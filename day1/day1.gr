@@ -38,10 +38,13 @@ func main(final args: List):
   var timer = std::time::TimePoint();
   final p1 = solve(input, 1);
   var elapsed = timer.elapsed_formatted();
+  assert(p1 == 69501);
   println("Problem 1: " + p1 + ", completed in " + elapsed);
 
   timer = std::time::TimePoint();
   final p2 = solve(input, 3);
   elapsed = timer.elapsed_formatted();
+  assert(p2 == 202346);
+
   println("Problem 2: " + p2 + ", completed in " + elapsed);
 end

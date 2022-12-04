@@ -1,0 +1,45 @@
+import std::file;
+import std::keyvaluepair;
+import std::list;
+import std::path;
+import std::string;
+import std::time;
+
+func solve(final input: List, only_fully_contained: Bool) :: Int:
+  var count = 0;
+
+  for line in input:
+    var split = line.split(',');
+    var pair1 = split[0].split('-');
+    var pair2 = split[1].split('-');
+
+    var x1 = Int(pair1[0]);
+    var y1 = Int(pair1[1]);
+    var x2 = Int(pair2[0]);
+    var y2 = Int(pair2[1]);
+
+    if only_fully_contained:
+      count += Int(x2 >= x1 and y2 <= y1 or x1 >= x2 and y1 <= y2);
+    else:
+      count += Int(x1 <= y2 and y1 >= x2);
+    end
+  end
+
+  return count;
+end
+
+func main():
+  final dir = std::path::Path(__FILE).get_directory();
+  final input_file = dir.combine("input.txt").data;
+  final input = std::file::read_all_lines(input_file);
+  
+  var timer = std::time::TimePoint();
+  var p1 = solve(input, true);
+  var elapsed = timer.elapsed_formatted();
+  println("Problem 1: " + p1 + ", completed in " + elapsed);
+
+  timer = std::time::TimePoint();
+  var p2 = solve(input, false);
+  elapsed = timer.elapsed_formatted();
+  println("Problem 2: " + p2 + ", completed in " + elapsed);
+end
