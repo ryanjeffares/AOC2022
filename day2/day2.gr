@@ -1,5 +1,6 @@
 import std::file;
 import std::list;
+import std::path;
 import std::string;
 import std::time;
 
@@ -45,8 +46,10 @@ func problem_one(input: List) :: Int:
 end
 
 func main(final args: List):
-  assert(args.length());
-  final input = std::file::read_all_lines(args[0]);
+  var file_path = std::path::Path(__FILE);
+  var input_path = file_path.get_directory().combine("input.txt");
+
+  var input = std::file::read_all_lines(input_path.data);
 
   var timer = std::time::TimePoint();
   var p1 = problem_one(input);

@@ -1,5 +1,6 @@
 import std::file;
 import std::list;
+import std::path;
 import std::string;
 import std::time;
 
@@ -29,17 +30,18 @@ func solve(input: List, num_elves: Int) :: Int:
 end
 
 func main(final args: List):
-  assert(args.length());
+  var file_path = std::path::Path(__FILE);
+  var input_path = file_path.get_directory().combine("input.txt");
 
-  final input_lines = std::file::read_all_lines(args[0]);
+  var input = std::file::read_all_lines(input_path.data);
 
   var timer = std::time::TimePoint();
-  final p1 = solve(input_lines, 1);
+  final p1 = solve(input, 1);
   var elapsed = timer.elapsed_formatted();
   println("Problem 1: " + p1 + ", completed in " + elapsed);
 
   timer = std::time::TimePoint();
-  final p2 = solve(input_lines, 3);
+  final p2 = solve(input, 3);
   elapsed = timer.elapsed_formatted();
   println("Problem 2: " + p2 + ", completed in " + elapsed);
 end

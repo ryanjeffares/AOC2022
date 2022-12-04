@@ -1,0 +1,18 @@
+import std::directory;
+import std::path;
+import std::system;
+
+func main(final args: List):
+  var root_name = std::path::Path(__FILE).get_directory();  
+
+  for i in [0..25]:
+    var day_name = "day" + (i + 1);
+    var dir_name = root_name.combine(day_name);
+    if dir_name.exists():
+      println("Day " + (i + 1));
+      var file_name = dir_name.combine(day_name + ".gr");
+      std::system::run("grace " + file_name.data);
+      println();
+    end
+  end
+end
