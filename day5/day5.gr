@@ -1,0 +1,92 @@
+import std::file;
+import std::list;
+import std::path;
+import std::string;
+import std::time;
+
+class Move:
+  var amount: Int;
+  var source: Int;
+  var dest: Int;
+
+  constructor(amt: Int, src: Int, dst: Int):
+    amount = amt;
+    source = src;
+    dest = dst;
+  end
+end
+
+func print_move(this Move move):
+  println("Move " + move.amount + " from " + move.source + " to " + move.dest);
+end
+
+func solve(stacks: List, moves: List, retain_order: Bool) :: String:
+  if retain_order:
+    for move in moves:
+      for i in [0..move.amount]:
+        final popped = stacks[move.source - 1].pop();
+        stacks[move.dest - 1].append(popped);
+      end
+    end
+  else:
+    for move in moves:
+      final source = stacks[move.source - 1];
+      final amount = move.amount;
+      final range = source.get_range(source.length() - amount, amount);
+      source.remove_range(source.length() - amount, amount);
+      stacks[move.dest - 1].append_range(range);
+    end
+  end
+
+  var res = "";
+  for stack in stacks:
+    res += stack.last();
+  end
+
+  return res;
+end
+
+func get_input(final stacks_path: String, final stacks: List, final moves_path: String, final moves: List):
+  final stacks_lines = std::file::read_all_lines(stacks_path);
+  for line in stacks_lines:
+    final stack = [];
+    for i in [0..line.length()]:
+      stack.append(line[i]);
+    end
+    stacks.append(stack);
+  end
+
+  final moves_lines = std::file::read_all_lines(moves_path);
+  for line in moves_lines:
+    final split = line.split(' ');
+    final amount = Int(split[1]);
+    final source = Int(split[3]);
+    final dest = Int(split[5]);
+    moves.append(Move(amount, source, dest));
+  end
+end
+
+func main():
+  final stacks_file = std::path::Path(__FILE).get_directory().combine("stacks.txt");
+  var stacks = [];
+  final moves_file = std::path::Path(__FILE).get_directory().combine("moves.txt");
+  var moves = [];
+
+  get_input(stacks_file.data, stacks, moves_file.data, moves);
+  var timer = std::time::TimePoint();
+  final p1 = solve(stacks, moves, true);
+  var elapsed = timer.elapsed_formatted();
+  assert(p1 == "QNHWJVJZW");
+  println("Problem 1: " + p1 + ", completed in " + elapsed);
+
+  // get clean input
+  stacks = [];
+  moves = [];
+  get_input(stacks_file.data, stacks, moves_file.data, moves);
+
+  timer = std::time::TimePoint();
+  final p2 = solve(stacks, moves, false);
+  elapsed = timer.elapsed_formatted();
+  assert(p2 == "BPCZJLFJW");
+  println("Problem 2: " + p2 + ", completed in " + elapsed);
+end

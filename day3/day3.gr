@@ -12,9 +12,10 @@ func problem_one(final input: List) :: Int:
 
   for line in input:
     var len = line.length();
+    var half_len = len / 2;
 
-    var first = Set(line.substring(0, len / 2));
-    var second = Set(line.substring(len / 2, len));
+    var first = Set(line.substring(0, half_len));
+    var second = Set(line.substring(half_len, half_len));
 
     for c in first:
       if second.contains(c):
