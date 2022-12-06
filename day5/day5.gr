@@ -24,17 +24,17 @@ func solve(stacks: List, moves: List, retain_order: Bool) :: String:
   if retain_order:
     for move in moves:
       for i in [0..move.amount]:
-        final popped = stacks[move.source - 1].pop();
-        stacks[move.dest - 1].append(popped);
+        final popped = stacks[move.source].pop();
+        stacks[move.dest].append(popped);
       end
     end
   else:
     for move in moves:
-      final source = stacks[move.source - 1];
+      final source = stacks[move.source];
       final amount = move.amount;
       final range = source.get_range(source.length() - amount, amount);
       source.remove_range(source.length() - amount, amount);
-      stacks[move.dest - 1].append_range(range);
+      stacks[move.dest].append_range(range);
     end
   end
 
@@ -60,8 +60,8 @@ func get_input(final stacks_path: String, final stacks: List, final moves_path: 
   for line in moves_lines:
     final split = line.split(' ');
     final amount = Int(split[1]);
-    final source = Int(split[3]);
-    final dest = Int(split[5]);
+    final source = Int(split[3]) - 1;
+    final dest = Int(split[5]) - 1;
     moves.append(Move(amount, source, dest));
   end
 end

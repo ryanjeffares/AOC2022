@@ -1,0 +1,36 @@
+import std::file;
+import std::gc;
+import std::path;
+import std::set;
+import std::string;
+import std::time;
+
+func solve(final input: String, final block_size: Int) :: Int:
+  var index = block_size;
+  final len = input.length();
+
+  while index < len:
+    final substr = input.substring(index - block_size, block_size);
+    final set = Set(substr);
+    if set.size() == block_size:
+      return index;
+    end
+
+    index += 1;
+  end
+end
+
+func main():
+  final input_path = std::path::Path(__FILE).get_directory().combine("input.txt");
+  final input_string = std::file::read_all_text(input_path.data);
+
+  var timer = std::time::TimePoint();
+  final p1 = solve(input_string, 4);
+  var elapsed = timer.elapsed_formatted();
+  println("Problem 1: " + p1 + ", completed in " + elapsed);
+
+  timer = std::time::TimePoint();
+  final p2 = solve(input_string, 14);
+  elapsed = timer.elapsed_formatted();
+  println("Problem 2: " + p2 + ", completed in " + elapsed);
+end
