@@ -1,0 +1,54 @@
+import std::dict;
+import std::file;
+import std::list;
+import std::path;
+import std::string;
+
+func problem_one(final input: List) :: Int:
+  final nav_stack = [];
+  final dirs = {};
+
+  for line in input:
+    final split = line.split(' ');
+
+    if split[0] == "$":
+      if split[1] == "cd":
+        final dir_name = split[2];
+        if dir_name == "..":
+          nav_stack.pop();
+        else:
+          if !dirs.contains_key(dir_name):
+            dirs.insert(dir_name, 0);
+          end
+          nav_stack.append(dir_name);
+        end
+      end
+    else if split[0] == "dir":
+      final dir_name = split[1];
+      if !dirs.contains_key(dir_name):
+        dirs.insert(dir_name, 0);
+      end
+    else:
+      final size = Int(split[0]);
+      for dir in nav_stack:
+        dirs[dir] = dirs[dir] + size;
+      end
+    end
+  end
+
+  var total = 0;
+  for dir_name, size in dirs:
+    if size < 100000:
+      total += size;
+    end
+  end
+
+  return total;
+end
+
+func main():
+  final input_file = std::path::Path(__FILE).get_directory().combine("input.txt");
+  final input_lines = std::file::read_all_lines(input_file.data);
+
+  println(problem_one(input_lines));
+end
