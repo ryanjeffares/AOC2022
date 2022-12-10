@@ -1,0 +1,155 @@
+import std::file;
+import std::list;
+import std::path;
+import std::time;
+
+const MAP_HEIGHT: Int = 99;
+const MAP_WIDTH:  Int = 99;
+
+func problem_one(final map: List) :: Int:
+  var visible_trees = MAP_HEIGHT * 2 + MAP_WIDTH * 2 - 4;
+
+  for y in [1..MAP_HEIGHT - 1]:
+    final row = map[y];
+
+    for x in [1..MAP_WIDTH - 1]:
+      final tree_height = row[x];
+      
+      var visible = true;
+      for i in [0..y]:
+        var h = map[i][x];
+        if h >= tree_height:
+          visible = false;
+          break;
+        end
+      end
+
+      if visible:
+        visible_trees += 1;
+        continue;
+      end
+
+      visible = true;
+      for i in [MAP_HEIGHT - 1..y by -1]:
+        var h = map[i][x];
+        if h >= tree_height:
+          visible = false;
+          break;
+        end
+      end
+
+      if visible:
+        visible_trees += 1;
+        continue;
+      end
+
+      visible = true;
+      for i in [0..x]:
+        var h = row[i];
+        if h >= tree_height:
+          visible = false;
+          break;
+        end
+      end
+
+      if visible:
+        visible_trees += 1;
+        continue;
+      end
+
+      visible = true;
+      for i in [MAP_WIDTH - 1..x by -1]:
+        var h = row[i];
+        if h >= tree_height:
+          visible = false;
+          break;
+        end
+      end
+
+      if visible:
+        visible_trees += 1;
+        continue;
+      end
+    end
+  end
+
+  return visible_trees;
+end
+
+func problem_two(final map: List) :: Int:
+  var highest = 0;
+
+  for y in [1..MAP_HEIGHT - 1]:
+    final row = map[y];
+
+    for x in [1..MAP_WIDTH - 1]:
+      final tree_height = row[x];
+
+      // look up
+      var up_score = 0;
+      for i in [y - 1..-1 by -1]:
+        up_score += 1;
+        if map[i][x] >= tree_height:
+          break;
+        end
+      end
+
+      // look down 
+      var down_score = 0;
+      for i in [y + 1..MAP_HEIGHT]:
+        down_score += 1;
+        if map[i][x] >= tree_height:
+          break;
+        end
+      end
+
+      // look left 
+      var left_score = 0;
+      for i in [x - 1..-1 by -1]:
+        left_score += 1;
+        if row[i] >= tree_height:
+          break;
+        end
+      end
+
+      // look right 
+      var right_score = 0;
+      for i in [x + 1..MAP_WIDTH]:
+        right_score += 1;
+        if row[i] >= tree_height:
+          break;
+        end
+      end
+
+      var score = up_score * down_score * right_score * left_score;
+      if score > highest:
+        highest = score;
+      end
+    end
+  end
+
+  return highest;
+end
+
+func main():
+  final input_path = std::path::Path(__FILE).get_directory().combine("input.txt");
+  final input_lines = std::file::read_all_lines(input_path.data);
+
+  final map = [];
+  for line in input_lines:
+    map.append([]);
+    for c in List(line):
+      map.last().append(Int(c) - Int('0'));
+    end
+  end
+
+  var timer = std::time::TimePoint();
+  final p1 = problem_one(map);
+  var elapsed = timer.elapsed_formatted();
+  println("Problem 1: " + p1 + ", completed in " + elapsed);
+
+  timer = std::time::TimePoint();
+  final p2 = problem_two(map);
+  elapsed = timer.elapsed_formatted();
+  println("Problem 2: " + p2 + ", completed in " + elapsed);
+end
