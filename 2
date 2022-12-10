@@ -4,7 +4,6 @@ import std::gc;
 import std::list;
 import std::path;
 import std::string;
-import std::time;
 
 class File:
   var name: String;
@@ -110,8 +109,5 @@ func main():
   final input_file = std::path::Path(__FILE).get_directory().combine("input.txt");
   final input_lines = std::file::read_all_lines(input_file.data);
 
-  final timer = std::time::TimePoint();
   solve(input_lines);
-  final elapsed = timer.elapsed_formatted();
-  println("Solved in " + elapsed);
 end
