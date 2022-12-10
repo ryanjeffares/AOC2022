@@ -4,41 +4,79 @@ import std::list;
 import std::path;
 import std::string;
 
+class File:
+  var name: String;
+  var size: Int;
+
+  constructor(n, s):
+    name = n;
+    size = s;
+  end
+end
+
+class Directory:
+  var name: String;
+  var dirs: List;
+  var files: List;
+
+  constructor(n):
+    name = n;
+    dirs = [];
+    files = [];
+  end
+end
+
+func get_size(this Directory dir) :: Int:
+  var size = 0;
+  for f in dir.files:
+    size += f.size;
+  end
+
+  for d in dir.dirs:
+    size += d.get_size();
+  end
+
+  return size;
+end
+
 func problem_one(final input: List) :: Int:
-  final nav_stack = [];
   final dirs = {};
+  final nav_stack = [];
 
   for line in input:
     final split = line.split(' ');
-
+    
     if split[0] == "$":
       if split[1] == "cd":
-        final dir_name = split[2];
-        if dir_name == "..":
+        var current_dir = split[2];
+        if current_dir == "..":
           nav_stack.pop();
         else:
-          if !dirs.contains_key(dir_name):
-            dirs.insert(dir_name, 0);
+          nav_stack.append(current_dir);
+          if !dirs.contains_key(current_dir):
+            dirs.insert(current_dir, Directory(current_dir));
           end
-          nav_stack.append(dir_name);
         end
       end
     else if split[0] == "dir":
-      final dir_name = split[1];
+      var dir_name = split[1];
+      var new_dir = Directory(dir_name);
       if !dirs.contains_key(dir_name):
-        dirs.insert(dir_name, 0);
+        dirs.insert(dir_name, new_dir);
       end
+      dirs[nav_stack.last()].dirs.append(new_dir);
     else:
-      final size = Int(split[0]);
-      for dir in nav_stack:
-        dirs[dir] = dirs[dir] + size;
-      end
+      var size = Int(split[0]);
+      var name = split[1];
+      var file = File(name, size);
+      dirs[nav_stack.last()].files.append(file);
     end
   end
 
   var total = 0;
-  for dir_name, size in dirs:
-    if size < 100000:
+  for dir_name, dir in dirs:
+    var size = dir.get_size();
+    if size <= 100000:
       total += size;
     end
   end
